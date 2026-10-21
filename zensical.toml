@@ -1,0 +1,78 @@
+[project]
+site_name = "TwinCAT Packaging Guide"
+site_description = "How to build TwinCAT Package Manager packages and workloads, host them on Nexus, and ship the same thing to Beckhoff RT Linux as apt packages"
+repo_url = "https://github.com/0w8States/Beckhoff-Package-Hosting"
+extra_css = ["stylesheets/extra.css"]
+# The site is read from disk or from "zensical serve", not from a web server,
+# so every page is written as a plain .html file that a file:// link reaches.
+use_directory_urls = false
+nav = [
+  { "Home" = "index.md" },
+  { "Packages" = [
+    { "What makes up a package" = "packages/anatomy.md" },
+    { "What makes up a workload" = "packages/workloads.md" },
+    { "Building and testing" = "packages/building.md" },
+  ] },
+  { "Examples" = [
+    { "PLC library" = "examples/plc-library.md" },
+    { ".NET service" = "examples/dotnet-service.md" },
+    { "Plain files" = "examples/files.md" },
+  ] },
+  { "Pitfalls" = "pitfalls.md" },
+  { "Nexus" = [
+    { "Setting up Nexus" = "nexus/setup.md" },
+    { "Publishing a release" = "nexus/publishing.md" },
+  ] },
+  { "Beckhoff RT Linux" = [
+    { "From tcpkg to .deb" = "linux/tcpkg-to-deb.md" },
+    { "Serving it with apt" = "linux/apt.md" },
+  ] },
+]
+
+[project.theme]
+variant = "classic"
+font.text = "Inter"
+features = [
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.top",
+  "navigation.footer",
+  "search.highlight",
+  "content.code.copy",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[project.markdown_extensions.admonition]
+
+[project.markdown_extensions.attr_list]
+
+[project.markdown_extensions.def_list]
+
+[project.markdown_extensions.footnotes]
+
+[project.markdown_extensions.md_in_html]
+
+[project.markdown_extensions.tables]
+
+[project.markdown_extensions.toc]
+
+[project.markdown_extensions.pymdownx.highlight]
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+[project.markdown_extensions.pymdownx.superfences]

@@ -1,0 +1,8 @@
+# Build output and cache of zensical (python -m zensical build)
+site/
+.cache/
+
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.vs/
