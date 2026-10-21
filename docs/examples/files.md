@@ -1,43 +1,16 @@
 # Example: plain files
 
-Most packages do not install a program. They put a file where TwinCAT looks for it and, sometimes, tell TwinCAT to look. This page has three of those from this repository and the gamepad project: a certificate that also needs a tool run and environment variables set, a route file that needs a service restart and a rule the metadata cannot express, and a folder of documentation that needs nothing at all.
+Most packages do not install a program. They put a file where TwinCAT looks for it and, sometimes, tell TwinCAT to look. This page has three of those: a folder of files that needs nothing more, a certificate that also needs a tool run and environment variables set, and a route file that needs a service restart and a rule the metadata cannot express. The certificate and the route file come from packages built for Beckhoff USA's own feed.
 
 ## A folder of files
 
-The simplest package there is: copy a folder, delete it on uninstall. The documentation package from the gamepad project:
+The simplest package there is: copy a folder, delete it on uninstall. It is the package the [Building a package](../packages/nuspec.md) section builds step by step, so the scripts are there.
 
-```powershell
-# chocolateyinstall.ps1
-$ErrorActionPreference = 'Stop'
-
-$toolsDir   = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$sourceDir  = Join-Path $toolsDir 'docs'
-$installDir = 'C:\Program Files\Beckhoff USA Community\ADS Gamepad\Documentation'
-
-New-Item -ItemType Directory -Force -Path $installDir | Out-Null
-Copy-Item (Join-Path $sourceDir '*') $installDir -Recurse -Force
-Write-Host "The documentation is installed in $installDir."
-```
-
-```powershell
-# chocolateyuninstall.ps1
-$ErrorActionPreference = 'Stop'
-
-$installDir = 'C:\Program Files\Beckhoff USA Community\ADS Gamepad\Documentation'
-$productDir = Split-Path $installDir -Parent
-
-if (Test-Path $installDir) { Remove-Item $installDir -Recurse -Force }
-if ((Test-Path $productDir) -and -not (Get-ChildItem $productDir -Force)) { Remove-Item $productDir -Force }
-Write-Host 'The documentation was removed.'
-```
-
-The uninstall removes the product folder only when it is empty, because other packages of the same product put their folders next to this one. A vendor folder under Program Files that several packages share is a good habit; each package owns one subfolder and the last one out turns off the light.
-
-The same shape installs a TcCOM module: the gamepad project's module package copies a folder tree into `C:\ProgramData\Beckhoff\TwinCAT\3.1\Repository\<Vendor>\<Module>\<Version>\`, checks that the `.tmc` file arrived, and removes exactly that version folder on uninstall. TwinCAT finds it there with no further step.
+The same shape installs a TcCOM module: the module package of the public [ADS-Gamepad-Service](https://github.com/Beckhoff-USA-Community/ADS-Gamepad-Service) project copies a folder tree into `C:\ProgramData\Beckhoff\TwinCAT\3.1\Repository\<Vendor>\<Module>\<Version>\`, checks that the `.tmc` file arrived, and removes exactly that version folder on uninstall. TwinCAT finds it there with no further step.
 
 ## A certificate
 
-The OEM certificate package from this repository. Signing a TwinCAT C++ or MATLAB module needs a certificate in the TwinCAT certificate store, its password granted to the Windows user through `TcSignTool`, and two environment variables that name the certificate. Four steps, and each one has a catch.
+An OEM certificate package. Signing a TwinCAT C++ or MATLAB module needs a certificate in the TwinCAT certificate store, its password granted to the Windows user through `TcSignTool`, and two environment variables that name the certificate. Four steps, and each one has a catch.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
@@ -46,7 +19,7 @@ $toolsDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $certDir  = Join-Path $env:ProgramData 'Beckhoff\TwinCAT\3.1\CustomConfig\Certificates'
 $envNames = @('TcSignTwinCatCertName', 'TWINCATCERTIFICATENAME')
 
-# ---- the certificate and the password, bundled from packaging\secrets at pack time ----
+# ---- the certificate and the password, bundled from the secrets folder at pack time ----
 $certSource = Get-ChildItem -Path $toolsDir -Filter '*.tccert' -File | Select-Object -First 1
 if (-not $certSource) { throw "No .tccert file found in $toolsDir. The package was built without the certificate." }
 $certFile   = $certSource.Name
@@ -86,19 +59,21 @@ if (Test-Path $passFile) { Remove-Item -Path $passFile -Force -ErrorAction Silen
 Write-Host 'Reboot or sign out and back in so Visual Studio and MATLAB see the new environment variables.'
 ```
 
+`Get-PackageParameterValue` is the helper shown under [package parameters](../packages/scripts.md#package-parameters).
+
 The catches:
 
 * **The exit code lies.** `TcSignTool grant` returns 1 whether it worked or not. The script reads the output and looks for the success line. Whenever you call a tool from a script, find out what its exit code means before you trust it.
 * **The grant does not check the password.** It stores whatever you give it; a wrong password fails the first signed build, not the install. There is nothing a script can do about that except say so.
 * **The grant is per Windows user.** TcSignTool stores it under `HKCU`, so install the package as the user who will build the projects.
 * **Environment variables need a new sign in.** Visual Studio and MATLAB read them at start. The script sets them in all three scopes and then tells the user to sign out, because that is the one part it cannot do.
-* **The password travels in the package.** It comes from `packaging\secrets\`, is bundled at pack time, is read once and deleted from the unpacked package folder. It is still in the `.nupkg` on the feed. That is acceptable only because the feed is LAN only; see [secrets at build time](../packages/building.md#secrets-at-build-time).
+* **The password travels in the package.** It comes from a secrets folder outside source control, is bundled at pack time, is read once and deleted from the unpacked package folder. It is still in the `.nupkg` on the feed. That is acceptable only because the feed is LAN only; see [secrets in a package](../packages/packing.md#secrets-in-a-package).
 
 The uninstall revokes the grant (`TcSignTool grant /f <cert> /r`), deletes the certificate file, and clears the variables by setting them to `$null`. It never throws.
 
 ## A route file
 
-The ADS-over-MQTT route package from this repository. ADS-over-MQTT lets TwinCAT systems find each other through an MQTT broker instead of static routes; the configuration is one XML file in the router's route folder. Beckhoff documents it at [infosys](https://infosys.beckhoff.com/content/1033/tc3_ads_over_mqtt/). The file looks like this, with the login filled in:
+An ADS-over-MQTT route package. ADS-over-MQTT lets TwinCAT systems find each other through an MQTT broker instead of static routes; the configuration is one XML file in the router's route folder. Beckhoff documents it at [infosys](https://infosys.beckhoff.com/content/1033/tc3_ads_over_mqtt/). The file looks like this, with the login filled in:
 
 ```xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -160,6 +135,6 @@ function Test-TcPkgInstalled([string]$Id) {
 
 It reads the disk rather than asking `tcpkg list`, because `tcpkg` is running this very script and a second instance would fail on the single-instance lock.
 
-The two packages share every script byte for byte; only `AdsOverMqtt.Variant.ps1` differs, with the package id, the other variant's ids and the marker text. The build lint enforces that, so a fix in one package cannot be forgotten in the other. When two packages are the same thing with different data, build them that way from the start.
+The two packages share every script byte for byte; only `AdsOverMqtt.Variant.ps1` differs, with the package id, the other variant's ids and the marker text. Keep those copies identical, so a fix in one package cannot be forgotten in the other. When two packages are the same thing with different data, build them that way from the start.
 
 The uninstall walks the same folders, removes the file only where the marker matches, and restarts the service once when it removed anything.

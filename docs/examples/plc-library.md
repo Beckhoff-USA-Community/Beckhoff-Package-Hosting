@@ -1,6 +1,6 @@
 # Example: a PLC library
 
-The package that installs a PLC library into the XAE library repository, so that it shows up under *Add Library* in every project on that PC. The example is the AdsGamepad library package from the ADS-Gamepad-Service project, `packaging\AdsGamepad.PlcLibrary` in that repository.
+The package that installs a PLC library into the XAE library repository, so that it shows up under *Add Library* in every project on that PC. The example is the AdsGamepad library package from the public [ADS-Gamepad-Service](https://github.com/Beckhoff-USA-Community/ADS-Gamepad-Service) project, `packaging\AdsGamepad.PlcLibrary` in that repository.
 
 ## The folder
 

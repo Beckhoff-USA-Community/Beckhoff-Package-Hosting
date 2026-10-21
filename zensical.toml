@@ -1,17 +1,18 @@
 [project]
 site_name = "TwinCAT Packaging Guide"
-site_description = "How to build TwinCAT Package Manager packages and workloads, host them on Nexus, and ship the same thing to Beckhoff RT Linux as apt packages"
-repo_url = "https://github.com/0w8States/Beckhoff-Package-Hosting"
+site_description = "How to build TwinCAT Package Manager packages and workloads by hand: the nuspec, the install scripts, versioning, packing and testing"
 extra_css = ["stylesheets/extra.css"]
 # The site is read from disk or from "zensical serve", not from a web server,
 # so every page is written as a plain .html file that a file:// link reaches.
 use_directory_urls = false
 nav = [
   { "Home" = "index.md" },
-  { "Packages" = [
-    { "What makes up a package" = "packages/anatomy.md" },
-    { "What makes up a workload" = "packages/workloads.md" },
-    { "Building and testing" = "packages/building.md" },
+  { "Building a package" = [
+    { "The folder and the nuspec" = "packages/nuspec.md" },
+    { "Install, upgrade and uninstall" = "packages/scripts.md" },
+    { "Versioning" = "packages/versioning.md" },
+    { "Packing and testing" = "packages/packing.md" },
+    { "Workloads" = "packages/workloads.md" },
   ] },
   { "Examples" = [
     { "PLC library" = "examples/plc-library.md" },
@@ -19,14 +20,6 @@ nav = [
     { "Plain files" = "examples/files.md" },
   ] },
   { "Pitfalls" = "pitfalls.md" },
-  { "Nexus" = [
-    { "Setting up Nexus" = "nexus/setup.md" },
-    { "Publishing a release" = "nexus/publishing.md" },
-  ] },
-  { "Beckhoff RT Linux" = [
-    { "From tcpkg to .deb" = "linux/tcpkg-to-deb.md" },
-    { "Serving it with apt" = "linux/apt.md" },
-  ] },
 ]
 
 [project.theme]

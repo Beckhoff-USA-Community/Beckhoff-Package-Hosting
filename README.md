@@ -1,29 +1,40 @@
 # Beckhoff Package Hosting
 
-The TwinCAT Packaging Guide: how to build TwinCAT Package Manager packages and workloads, host them on a
-Nexus server of your own, and ship the same thing to Beckhoff RT Linux controllers as apt packages. The guide
-is a static site built with [Zensical](https://zensical.org/) from the Markdown pages under `docs\`, in the
+The TwinCAT Packaging Guide: how to build TwinCAT Package Manager packages and workloads by hand. The nuspec,
+the install, uninstall and before-modify scripts, versioning, the pack command, and a test install from a
+local folder feed. The guide is written to be handed to customers as it is, so it stands alone: it shows the
+manual steps and leaves automating them to the reader.
+
+It is a static site built with [Zensical](https://zensical.org/) from the Markdown pages under `docs\`, in the
 same setup as the ADS-Gamepad-Service documentation: `zensical.toml` holds the navigation and the theme,
 `docs\stylesheets\extra.css` the Beckhoff USA Community look.
 
 ```
 zensical.toml        navigation, theme, Markdown extensions
 docs\
-  index.md           home page
-  packages\          what makes up a package, what makes up a workload, building and testing
-  examples\          PLC library, .NET service, plain files
+  index.md           home page: who it is for, what you need, the words, the placeholders
+  packages\          building a package, in numbered steps:
+    nuspec.md          steps 1-3: the folder, the nuspec, the release notes file
+    scripts.md         steps 4-6: install, uninstall and before-modify scripts; the tcpkg commands
+    versioning.md      version numbers, dependency versions, prereleases, upgrades
+    packing.md         steps 7-10: tcpkg pack, looking inside, a local folder feed, a test install
+    workloads.md       turning packages into a card in the GUI
+  examples\          PLC library, .NET service, plain files (certificate, route file)
   pitfalls.md
-  nexus\             setting up Nexus, publishing a release
-  linux\             from tcpkg to .deb, serving it with apt
   stylesheets\       extra.css
 site\                build output (git-ignored)
 ```
 
-The examples quote real packages from two repositories: the Iris packaging repository
-(`Iris-Manor-Custom-Nexus-Packages`, the certificate, route and workload packages plus the Nexus and apt
-scripts) and the ADS-Gamepad-Service project (the PLC library, the Windows service and the Linux package).
-When a package there changes, check the page that quotes it. Hostnames and feed names in the pages are
-placeholders on purpose, so the guide can be shared.
+The running example in the `packages\` pages, `MyCompany.XAE.Docs.MyMachine`, was packed with `tcpkg` 2.6.24
+exactly as the pages show it. The examples quote real packages: the public
+[ADS-Gamepad-Service](https://github.com/Beckhoff-USA-Community/ADS-Gamepad-Service) project (the PLC library and
+the Windows service) and packages built for Beckhoff USA's own feed (the certificate, route and workload
+packages, ids starting with `BAUS`). When one of those packages changes, check the page that quotes it.
+Company names, hostnames and feed names in the pages are placeholders on purpose.
+
+Hosting a feed (a shared folder, GitHub, Nexus) and Beckhoff RT Linux packages are not in the guide for now.
+Earlier pages on Nexus and on apt for Beckhoff RT Linux are in commit `50cf836` (`docs\nexus\`, `docs\linux\`,
+and the Nexus and Linux sections of `docs\pitfalls.md`) for a later hosting section.
 
 ## Reading it
 

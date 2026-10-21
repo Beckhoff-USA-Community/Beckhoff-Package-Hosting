@@ -6,24 +6,26 @@ Everything on this page happened. Most entries are one line; the page they belon
 
 * **`tcpkg` is single instance.** A second `TcPkg.exe` fails with "TcPkg is already running". Close the GUI before building or publishing, and check `Get-Process TcPkg` when something fails anyway: the GUI keeps a child process that holds the lock and sometimes leaves it behind on close.
 * **Inside a package script you are already inside `tcpkg`.** Do not call `tcpkg` from an install script for anything but a read with `--ignore-mutex`. Read the Package Manager's settings from `%ProgramData%\Beckhoff\TcPkg\appsettings.json` instead of `tcpkg config list`, and check what is installed by looking at the folders under `%ProgramData%\Beckhoff\TcPkg\lib` instead of `tcpkg list`.
-* **Scripts run under Windows PowerShell 5.1.** PowerShell 7 syntax in a package script fails on the target with a parse error that names a line you did not think twice about.
+* **Scripts run under the Package Manager's own PowerShell.** That is PowerShell 7.4 in `tcpkg` 2.6.24, and was Windows PowerShell 5.1 in earlier versions, where PowerShell 7 syntax fails with a parse error that names a line you did not think twice about. Write for 5.1 and the script runs in both.
+* **The install script runs from a temporary folder.** `%TEMP%\TcPkg\cache\...` is cleaned up afterwards. Copy the payload to where it belongs; never point a service or a shortcut at the script's folder.
 * **`tcpkg install --dry-run` needs an elevated shell** although it changes nothing.
+* **Close TwinCAT XAE Shell and Visual Studio before installing.** `tcpkg` refuses with exit code 1051 while one of them runs, even for a package that has nothing to do with the engineering.
+* **`tcpkg` installs the lowest version a dependency allows.** `version="1.0.0"` installs 1.0.0 even when 1.1.0 is on the feed. That is what makes the plain form work as a pin.
 * **Turn signature verification off before adding an unsigned feed**, with `tcpkg config unset -n VerifySignatures`. The order matters: with verification on, adding the feed fails, and so does every install from it.
-* **GitHub package feeds need `--take 100`** on `tcpkg source add`, or the add fails with "Failed to retrieve metadata from source". GitHub refuses pages larger than 100 and the Package Manager asks for 500.
-* **Feed metadata is cached for about 30 minutes.** A package you just pushed is not there yet. `--no-cache` on the command, *Reload Information* in the GUI, or delete the feed's folder under `%LOCALAPPDATA%\NuGet\v3-cache`.
+* **Feed metadata is cached for about 30 minutes.** A package you just published is not there yet. `--no-cache` on the command, *Reload Information* in the GUI, or delete the feed's folder under `%LOCALAPPDATA%\NuGet\v3-cache`.
 * **Uninstalling a workload with `--include-dependencies` takes `TwinCAT.XAE.Base` with it.** Name the component packages instead.
 * **Elevated tests and network drives do not mix.** Copy packages to a local folder before `tcpkg source add`, and start an elevated shell with `-WorkingDirectory C:\`.
-* **`tcpkg push` writes its command line, API key included, to `C:\ProgramData\Beckhoff\TcPkg\logs\TcPkg.log`.** Push with `dotnet nuget push` instead.
 
 ## Metadata
 
-* **A published version is immutable.** Every change, however small, is a new version. On your own Nexus you can delete and re-push the same version; do that for a fix you made five minutes ago and never for a version anyone has installed, because their PC will not see a difference.
-* **Three part versions.** `1.2.0.0` becomes `1.2.0` on the way through NuGet and the folder names stop matching.
+* **A published version is immutable.** Every change, however small, is a new version. On a feed you control you can delete a version and publish it again; do that for a fix you made five minutes ago and never for a version anyone has installed, because their PC will not see a difference.
+* **Three part versions.** `tcpkg pack` names a `1.2.0.0` package `...1.2.0.0.nupkg` while the nuspec inside says `1.2.0`, and from there file names, folder names and feed listings disagree.
+* **`tcpkg pack -o` needs a folder that exists.** It does not create one. Without `-o` the package lands next to the nuspec, among your sources.
 * **The description is printed raw.** One or two plain sentences. Line breaks, bullets and Markdown show up as typed.
 * **The release notes parser knows headings and sentences.** Bullet lists render as `[object Object]`. Bold, backticks and links print their markers.
-* **A `<file src>` that matches nothing is skipped without a word.** The package builds, ships, and fails on the target. Lint for it.
+* **A `<file src>` that matches nothing is skipped without a word.** The package builds, ships, and fails on the target. List what is in the package before you ship it.
 * **Icons are for workloads only.** A package with `<iconUrl>` still gets the stock icon.
-* **A remote feed hands the GUI metadata only.** Icons and release notes inside the package are never read from a NuGet server; they need hosted copies. See [publishing](nexus/publishing.md).
+* **A NuGet server hands the GUI metadata only.** Icons and release notes inside the package are never read from a feed served by a NuGet server such as Nexus; they need hosted copies next to the feed. A local folder feed has no such problem.
 * **Ids starting with `TcPkg` are hidden** by the GUI.
 * **A nuspec cannot say "not together with".** When two packages exclude each other, the install script is the only guard.
 * **Pin your own component versions in a workload.** Otherwise upgrading the workload leaves the components where they were.
@@ -33,35 +35,19 @@ Everything on this page happened. Most entries are one line; the page they belon
 
 * **Never throw from an uninstall script.** A failing uninstall leaves a package half removed and still listed as installed. `$ErrorActionPreference = 'Continue'`, report, finish.
 * **Remove only what you put there.** Mark your files (a comment line, a known folder) and check the mark before deleting.
-* **Make the install script safe to run twice.** An upgrade is a second run.
+* **An upgrade does not run the uninstall script.** It runs the old version's before-modify script and then the new version's install script over the old files. Make the install script safe to run over an older install, and have it remove what a newer version no longer ships.
+* **The before-modify script of the old version is the one that runs on an upgrade.** A fix to it takes effect one upgrade later.
+* **Package parameters are not remembered.** An upgrade runs the install script without the parameters given at install time.
 * **Find the payload relative to the script**, with `Split-Path -Parent $MyInvocation.MyCommand.Definition`. The unpack location is the Package Manager's business.
 * **Stop a service before you overwrite its files.** The before-modify script exists for that.
 * **Check exit codes you understand.** `TcSignTool` returns 1 on success and on failure; `robocopy` returns up to 7 on success; `RepTool`'s codes are undocumented. Read the output or check the result on disk.
 * **A tool can accept a wrong input and say nothing.** `TcSignTool grant` stores a wrong password without complaint. Tell the user where the failure will show up instead.
 * **Environment variables set by a script are seen by new processes only.** Tell the user to sign out or reboot.
 * **The router reads route files only when it starts.** Copying the file is not enough; restart `TcSysSrv`. It is enough in UM mode too, no reboot.
-* **Package parameters are best effort.** Beckhoff documents `--params` for the HMI Server only. Always have a default.
+* **Package parameters are best effort.** Beckhoff documents `--params` for the HMI Server only. Separate them with spaces, not semicolons, and always have a default.
 
 ## Secrets
 
 * **Whatever is in the package is on the feed in plain text.** A bundled password is readable by anyone who can read the feed. Acceptable on a LAN feed, nowhere else.
-* **Keep secrets out of git with a git-ignored folder and a relative `<file src>`.** Have the build fail when the file is missing, so a clone cannot build a hollow package.
+* **Keep secrets out of source control with an ignored folder and a relative `<file src>`.** A copy of your sources without that folder packs a package without the secret, without a word. Check the package contents, and have the install script throw when the file is missing.
 * **Delete a bundled password from the unpacked package folder after use.** It is still in the `.nupkg`, but not in the first place someone looks.
-
-## Nexus
-
-* **Nexus answers an unauthenticated write with 403, not 401, when anonymous access is on.** PowerShell's `-Credential` waits for a 401 challenge that never comes. Send the `Authorization: Basic` header up front.
-* **Invoke-RestMethod hands a JSON array back as one object** in PowerShell 7.6, so `Where-Object` over the repository list matched the whole list. Use `Invoke-WebRequest` and `ConvertFrom-Json` on the text.
-* **Nexus does not advertise a readme template in its NuGet index**, so a feed registered straight on Nexus's `index.json` shows no Feature Release Notes. Register the hosted copy of the index.
-* **The NuGet API-Key realm has to be active** (Security, Realms) or the API key from the user menu does nothing.
-* **The raw repository needs the write policy *Allow* and strict content validation off**, or re-uploading `index.json` fails and `.md` files are refused.
-* **Anonymous read is what the GUI uses.** When an icon or release note shows up for you and not for a colleague, check the URL without a login.
-
-## Beckhoff RT Linux and apt
-
-* **The apt repository is write once per version.** apt caches by version, so a re-upload of a changed file with the same version would be ignored by every client that already saw it. Bump `Version:` in `control`.
-* **Nexus signs the repository but does not serve the public key.** `repository-key.gpg` returns 404 on the Community edition. Host the public half somewhere apt clients can fetch it (the raw repository works).
-* **A file you want removed on uninstall must not be a conffile.** dpkg keeps conffiles on `remove` and deletes them on `purge` only.
-* **Maintainer scripts are `/bin/sh`**, not bash, and `postrm` runs on upgrade too (with `upgrade` as its argument), so test `$1`.
-* **Package names are lower case** with hyphens; `Version:` is `x.y.z` or `x.y.z-n`.
-* **Restart `TcSystemServiceUm`, not `TcSysSrv`**, on Linux. Same reason as on Windows: the router reads routes when it starts.

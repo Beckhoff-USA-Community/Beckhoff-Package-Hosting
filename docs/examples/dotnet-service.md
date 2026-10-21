@@ -1,6 +1,6 @@
 # Example: a .NET service
 
-The package that installs a .NET application as a Windows service: copies the published binaries to Program Files, registers the service, starts it, and keeps the configuration file across upgrades. The example is the ADS Gamepad Service package from the ADS-Gamepad-Service project, `packaging\AdsGamepadService.Service` in that repository. It is a worker service, not a web application; the [last section](#when-it-is-an-aspnet-application) says what changes when it is.
+The package that installs a .NET application as a Windows service: copies the published binaries to Program Files, registers the service, starts it, and keeps the configuration file across upgrades. The example is the ADS Gamepad Service package from the public [ADS-Gamepad-Service](https://github.com/Beckhoff-USA-Community/ADS-Gamepad-Service) project, `packaging\AdsGamepadService.Service` in that repository. It is a worker service, not a web application; the [last section](#when-it-is-an-aspnet-application) says what changes when it is.
 
 ## The folder
 
@@ -9,14 +9,14 @@ AdsGamepadService.Service\
   AdsGamepadService.Service.nuspec
   LICENSE.txt
   docs\README.md
-  bin\                               the publish output, written by the build script, git-ignored
+  bin\                               the publish output, written right before packing
   tools\
     chocolateyinstall.ps1
     chocolateyuninstall.ps1
     chocolateybeforemodify.ps1
 ```
 
-`bin\` is not in git. The build script publishes the application into it right before packing:
+`bin\` is build output, not source, so keep it out of source control. Publish the application into it, then pack:
 
 ```powershell
 dotnet publish .\src\AdsGamepadService -c Release -r win-x64 --self-contained -o .\packaging\AdsGamepadService.Service\bin
