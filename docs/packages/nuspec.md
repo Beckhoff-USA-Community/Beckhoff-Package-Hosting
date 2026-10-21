@@ -127,7 +127,7 @@ First release.
 
 Add a line under *Release history* with every new version. The user reads this tab to decide whether to upgrade.
 
-On Beckhoff's feed and on a local folder feed the tab works as it is. A feed served by a NuGet server of your own, such as Nexus, hands the GUI the nuspec metadata but no file from inside the package, so there the release notes need a copy hosted next to the feed. Verified with `tcpkg` 2.4 against Nexus, and still so with 2.6.
+On Beckhoff's feed and on a local folder feed the tab works as it is. A feed served by a NuGet server of your own, such as Nexus, hands the GUI the nuspec metadata but no file from inside the package, so there the release notes need a copy hosted next to the feed. Verified with `tcpkg` 2.4 against Nexus, and still so with 2.6. The [hosting section](../hosting/index.md#inside-the-package-or-hosted-next-to-the-feed) shows how.
 
 ## What the GUI shows, and where it comes from
 

@@ -1,8 +1,8 @@
 # Beckhoff Package Hosting
 
-The TwinCAT Packaging Guide: how to build TwinCAT Package Manager packages and workloads by hand. The nuspec,
-the install, uninstall and before-modify scripts, versioning, the pack command, and a test install from a
-local folder feed. The guide is written to be handed to customers as it is, so it stands alone: it shows the
+The TwinCAT Packaging Guide: how to build TwinCAT Package Manager packages and workloads by hand, and how to
+host them. The nuspec, the install, uninstall and before-modify scripts, versioning, the pack command, a test
+install from a local folder feed, and feeds on a folder, GitHub Packages or Nexus. The guide is written to be handed to customers as it is, so it stands alone: it shows the
 manual steps and leaves automating them to the reader.
 
 It is a static site built with [Zensical](https://zensical.org/) from the Markdown pages under `docs\`, in the
@@ -20,6 +20,13 @@ docs\
     packing.md         steps 7-10: tcpkg pack, looking inside, a local folder feed, a test install
     workloads.md       turning packages into a card in the GUI
   examples\          PLC library, .NET service, plain files (certificate, route file)
+  hosting\           feeds for other PCs:
+    index.md           the three kinds of feed; icons and release notes inside the package or hosted
+    signatures.md      turning off signature verification
+    folder.md          a folder on disk
+    github.md          GitHub Packages: classic token, --take 100, what the GUI shows
+    nexus.md           Nexus: repositories, push, hosted icons, hosted service index for release notes
+  images\            Package Manager screenshots (feed-*.png)
   pitfalls.md
   stylesheets\       extra.css
 site\                build output (git-ignored)
@@ -32,9 +39,9 @@ the Windows service) and packages built for Beckhoff USA's own feed (the certifi
 packages, ids starting with `BAUS`). When one of those packages changes, check the page that quotes it.
 Company names, hostnames and feed names in the pages are placeholders on purpose.
 
-Hosting a feed (a shared folder, GitHub, Nexus) and Beckhoff RT Linux packages are not in the guide for now.
-Earlier pages on Nexus and on apt for Beckhoff RT Linux are in commit `50cf836` (`docs\nexus\`, `docs\linux\`,
-and the Nexus and Linux sections of `docs\pitfalls.md`) for a later hosting section.
+Beckhoff RT Linux packages are not in the guide for now; the earlier pages on apt are in commit `50cf836`
+(`docs\linux\` and the Linux section of `docs\pitfalls.md`). In the Nexus screenshot,
+`docs\images\feed-nexus.png`, the broker name is blanked out.
 
 ## Reading it
 

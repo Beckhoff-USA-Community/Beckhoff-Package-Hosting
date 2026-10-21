@@ -72,13 +72,28 @@ The three tags
 :   `Workload` again, `Category<Name>` for the group the card sits in, and `VariantXAE` or `VariantXAR` for the row on the card. All three are required; the GUI does not draw the card without them. A multi word category keeps its spaces as `&#160;` (a non breaking space) so that it stays one tag: `CategoryAdvanced&#160;Applications&#160;Group` shows up as the category *Advanced Applications Group*. That is how the community workloads do it, and it works.
 
 `<icon>` and `<iconUrl>`
-:   A workload is the only kind of package the GUI draws a custom icon for. `icon.png` is 64 by 64 pixels, and `<icon>` names it inside the package. On a local folder feed `<icon>` alone is enough. On a feed served by a NuGet server such as Nexus, the GUI never reads a file out of the package, so `<iconUrl>` points at a copy of the same image hosted next to the feed. A component package carries neither; it always gets the stock icon.
+:   A workload is the only kind of package the GUI draws a custom icon for. `icon.png` is 64 by 64 pixels, and `<icon>` names it inside the package. On a local folder feed `<icon>` alone is enough. On a feed served by a NuGet server such as Nexus, the GUI never reads a file out of the package, so `<iconUrl>` points at a copy of the same image hosted next to the feed; the [Nexus page](../hosting/nexus.md#the-icons) shows how. A component package carries neither; it always gets the stock icon.
 
 `<title>` shared between two workloads
 :   An XAE and an XAR workload with the same title are drawn as one card with an Engineering and a Runtime row. That is the TwinCAT Standard pattern, and it is how the two ADS-over-MQTT workloads become one card.
 
 `<description>`
 :   The card prints it in full, so it is one short sentence. The release notes file is the place for the long version.
+
+`<readme>`
+:   A workload's release notes are the place to say what is in it. A layout that reads well in the GUI lists the packages and their versions first, then the release history, each line plain text because the parser does not render lists:
+
+    ```markdown
+    ## Packages in this workload
+    MyCompany.XAE.Docs.MyMachine 1.1.0: MyMachine documentation
+    MyCompany.XAE.PLC.Lib.MyMachine 2.0.0: MyMachine PLC library
+
+    ## Release history
+    ### 1.1.0
+    Documentation 1.1.0, with the spare parts list.
+    ### 1.0.0
+    First release.
+    ```
 
 `<dependencies>`
 :   Your component packages at the versions the workload was tested with, written plainly as `version="1.2.0"` (the [versioning page](versioning.md#dependency-versions) shows why that pins), and the Beckhoff base package the side needs at `0.0.0`. Pinning your own packages is what makes an upgrade work: upgrade the workload and the Package Manager upgrades its components to the versions the new workload names. Leaving them open would let the workload install while its parts stay old.

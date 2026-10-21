@@ -1,6 +1,6 @@
 [project]
 site_name = "TwinCAT Packaging Guide"
-site_description = "How to build TwinCAT Package Manager packages and workloads by hand: the nuspec, the install scripts, versioning, packing and testing"
+site_description = "How to build TwinCAT Package Manager packages and workloads by hand, and host them on a folder feed, GitHub Packages or Nexus"
 extra_css = ["stylesheets/extra.css"]
 # The site is read from disk or from "zensical serve", not from a web server,
 # so every page is written as a plain .html file that a file:// link reaches.
@@ -18,6 +18,13 @@ nav = [
     { "PLC library" = "examples/plc-library.md" },
     { ".NET service" = "examples/dotnet-service.md" },
     { "Plain files" = "examples/files.md" },
+  ] },
+  { "Hosting" = [
+    { "Hosting packages" = "hosting/index.md" },
+    { "Signature verification" = "hosting/signatures.md" },
+    { "A folder on disk" = "hosting/folder.md" },
+    { "GitHub Packages" = "hosting/github.md" },
+    { "Nexus" = "hosting/nexus.md" },
   ] },
   { "Pitfalls" = "pitfalls.md" },
 ]

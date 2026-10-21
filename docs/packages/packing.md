@@ -71,7 +71,7 @@ The first line turns signature checking off. Beckhoff signs its own packages, so
 
 Keep the folder on a local drive. An elevated `tcpkg` does not always see a mapped network drive, and on one PC, starting an elevated shell with a network drive as its working directory made the elevation itself fail. If your packages are built on a share, copy them to `C:\feed` first, and start elevated shells with `-WorkingDirectory C:\`.
 
-A folder feed is the right tool for testing. Beckhoff notes on the same Infosys page that it is slower than a NuGet server: the Package Manager has to read every package in the folder to learn its name and version, where a server hands that metadata over separately.
+A folder feed is the right tool for testing, and the [hosting section](../hosting/index.md) covers it and the alternatives for sharing packages with other PCs. Beckhoff notes on the same Infosys page that it is slower than a NuGet server: the Package Manager has to read every package in the folder to learn its name and version, where a server hands that metadata over separately.
 
 ## Step 10: install, check, upgrade, uninstall
 
@@ -121,7 +121,7 @@ A checklist of the mistakes that have already happened once:
 * A dependency on a Beckhoff package uses `0.0.0`.
 * Every `<file src>` matched something: step 8 shows the file in the package.
 * The install script ran, the upgrade from the previous version ran, and the uninstall left nothing behind.
-* The scripts use nothing that needs PowerShell 7.
+* The scripts use nothing that needs PowerShell 7, if the package may meet an older Package Manager.
 * For a workload: see the [workload page](workloads.md).
 
 ## Secrets in a package
