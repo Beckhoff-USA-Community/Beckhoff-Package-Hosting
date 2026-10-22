@@ -28,11 +28,13 @@ docs\
     nexus.md           Nexus: repositories, push, hosted icons, hosted service index for release notes
   images\            Package Manager screenshots (feed-*.png)
   pitfalls.md
-  other\             "Not the primary focus": the same Nexus for other clients, one example (the route file):
-    index.md           what was tested, the repositories, what each client needs that tcpkg does not
-    debian.md          Beckhoff RT Linux: the .deb, the apt repository, a controller
-    freebsd.md         TwinCAT/BSD: the .pkg, the restart over ADS, signing, pkg repo, a controller
-    docker.md          Docker images for TwinCAT containers: a short example, pull, change, push
+  self-hosting\      the same Nexus for apt, pkg and Docker, one example (the route file), in numbered steps:
+    index.md           the pages, the repositories, what each client needs that tcpkg does not
+    rt-linux-building.md   Beckhoff RT Linux: build and test the .deb, the apt repository, publish
+    rt-linux-clients.md    Beckhoff RT Linux: key, source line, install, upgrade, remove
+    tcbsd-building.md      TwinCAT/BSD: build and test the .pkg, signing, pkg repo, publish
+    tcbsd-clients.md       TwinCAT/BSD: fingerprint, repository file, install, upgrade, firewall
+    docker.md          Docker images: pull, change, push to Nexus, pull on a controller
   stylesheets\       extra.css
 site\                build output (git-ignored)
 ```
@@ -44,9 +46,9 @@ the Windows service) and packages built for Beckhoff USA's own feed (the certifi
 packages, ids starting with `BAUS`). When one of those packages changes, check the page that quotes it.
 Company names, hostnames and feed names in the pages are placeholders on purpose.
 
-The `other\` pages cover Beckhoff RT Linux (apt), TwinCAT/BSD (pkg) and Docker images briefly, at the back
-of the guide. The apt and pkg pages were tested on a CX2043 with Beckhoff RT Linux and a CX with TwinCAT/BSD
-14.4 and 15.1; the Docker page is a short proposal with one example. The earlier, longer apt pages
+The `self-hosting\` pages cover Beckhoff RT Linux (apt), TwinCAT/BSD (pkg) and Docker images at the back of
+the guide. The apt and pkg packages and repositories were tested on a CX2043 with Beckhoff RT Linux and a CX
+with TwinCAT/BSD 14.4 and 15.1; the Docker page is a short proposal with one example. The earlier, longer apt pages
 are in commit `50cf836` (`docs\linux\`). In the Nexus screenshot, `docs\images\feed-nexus.png`, the broker name
 is blanked out.
 

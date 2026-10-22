@@ -29,7 +29,7 @@ TwinCAT 3.1 Build 4026 installs through the **TwinCAT Package Manager**. It has 
 2. **Examples.** The same steps on the packages people most often build: a [PLC library](examples/plc-library.md), a [.NET service](examples/dotnet-service.md), and [plain files](examples/files.md) such as a certificate or a route file.
 3. **[Hosting](hosting/index.md).** Put the packages on a feed other PCs can reach: [a folder on disk](hosting/folder.md), [GitHub Packages](hosting/github.md) or [Nexus](hosting/nexus.md). Read the first page of the section whichever you pick; it explains why icons and release notes need extra care on a server.
 4. **[Pitfalls](pitfalls.md).** Read it before you share anything. Most of it is one line each, and every line cost somebody an afternoon.
-5. **[Not the primary focus](other/index.md).** The same Nexus can also host Debian packages for Beckhoff RT Linux, FreeBSD packages for TwinCAT/BSD, and Docker images for TwinCAT containers. A shorter section, with the ADS-over-MQTT route file as its one example.
+5. **[Self-hosting other packages](self-hosting/index.md).** The same Nexus can also host Debian packages for Beckhoff RT Linux, FreeBSD packages for TwinCAT/BSD, and Docker images. Each platform has a page for building and publishing a package and a page for setting up a controller, with the ADS-over-MQTT route file as the example.
 
 ## Names used in this guide
 
@@ -42,7 +42,7 @@ Company names, hostnames and feed names in this guide are placeholders. Swap the
 | `MyFeed` | the name of a feed as the Package Manager shows it |
 | `https://nexus.example.com` | your Nexus server |
 | `nuget-hosted`, `tcpkg-raw` | the two repositories on Nexus: the packages, and the files the GUI needs next to them |
-| `apt-hosted`, `docker-hosted` | the apt and Docker repositories on Nexus, in the [Not the primary focus](other/index.md) section |
+| `apt-hosted`, `docker-hosted` | the apt and Docker repositories on Nexus, in [self-hosting other packages](self-hosting/index.md) |
 | `mqtt.example.com` | the MQTT broker the ADS-over-MQTT example connects to |
 
 Package ids that start with `BAUS` are Beckhoff USA's own, and ids that start with `Beckhoff-USA-Community` come from the community projects. They are quoted as they are.

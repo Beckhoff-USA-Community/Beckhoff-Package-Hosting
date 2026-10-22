@@ -10,7 +10,7 @@ This section covers three kinds of feed:
 | [GitHub Packages](github.md) | the NuGet registry of a GitHub account or organization | packages you publish anyway, with your source on GitHub |
 | [Nexus](nexus.md) | a Sonatype Nexus Repository server you run | a team or a company network, with the full GUI experience |
 
-Nexus can also host packages for Beckhoff RT Linux and TwinCAT/BSD, and container images. That is outside the Package Manager, so it has a section of its own at the back: [Not the primary focus](../other/index.md).
+Nexus can also host packages for Beckhoff RT Linux and TwinCAT/BSD, and container images. That is outside the Package Manager, so it has a section of its own at the back: [self-hosting other packages](../self-hosting/index.md).
 
 Whichever you pick, two things come first:
 

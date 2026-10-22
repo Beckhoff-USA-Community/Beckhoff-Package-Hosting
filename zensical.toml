@@ -27,11 +27,13 @@ nav = [
     { "Nexus" = "hosting/nexus.md" },
   ] },
   { "Pitfalls" = "pitfalls.md" },
-  { "Not the primary focus" = [
-    { "Other platforms on Nexus" = "other/index.md" },
-    { "Debian packages for RT Linux" = "other/debian.md" },
-    { "FreeBSD packages for TwinCAT/BSD" = "other/freebsd.md" },
-    { "Docker images" = "other/docker.md" },
+  { "Self-hosting other packages" = [
+    { "Overview" = "self-hosting/index.md" },
+    { "Package building for RT Linux" = "self-hosting/rt-linux-building.md" },
+    { "Client package usage on RT Linux" = "self-hosting/rt-linux-clients.md" },
+    { "Package building for TwinCAT/BSD" = "self-hosting/tcbsd-building.md" },
+    { "Client package usage on TwinCAT/BSD" = "self-hosting/tcbsd-clients.md" },
+    { "Docker images" = "self-hosting/docker.md" },
   ] },
 ]
 
