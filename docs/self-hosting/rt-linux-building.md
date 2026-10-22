@@ -64,7 +64,7 @@ Description: ADS-over-MQTT connection to the MQTT broker
 * `Version` goes up with every change. The repository refuses to replace a version.
 * `Architecture: all` is for a package without compiled programs.
 * `Depends: tc31-xar-um` is the TwinCAT Usermode Runtime.
-* `Conflicts` keeps the engineering variant out. It is the field a nuspec does not have.
+* `Conflicts` keeps the engineering variant out. It is the field a nuspec does not have. `dpkg -i` refuses to install over the other variant; `apt install` offers to remove it first and asks.
 * `Description`: the first line is the short text; the lines after it start with one space.
 
 ## Step 3: the install script

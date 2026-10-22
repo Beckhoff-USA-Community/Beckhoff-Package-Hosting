@@ -17,10 +17,6 @@ Three things to know about it:
 * **For the whole PC.** It is a Package Manager setting, not a property of one feed; `tcpkg source add` has no option for it. It stays off until someone turns it on again.
 * **Tell your users.** Whoever installs your packages has to run that line once. Put it at the top of your installation instructions, next to the `tcpkg source add` line.
 
-To turn checking back on, `tcpkg config set --help` gives this line (not tried for this guide):
-
-```powershell
-tcpkg config set -n VerifySignatures
-```
+Turning checking back on was not tried for this guide. The setting is `VerifySignatures`, and `tcpkg config set --help` shows how to set it. Try it on a test PC and check with `tcpkg config list` that it reads `VerifySignatures: True` before you rely on it.
 
 Next: pick a feed. The simplest is [a folder on disk](folder.md).

@@ -20,10 +20,11 @@ AdsGamepadService.Service\
 
 ```powershell
 dotnet publish .\src\AdsGamepadService -c Release -r win-x64 --self-contained -o .\packaging\AdsGamepadService.Service\bin
+New-Item -ItemType Directory -Force .\packaging\bin\release | Out-Null
 tcpkg pack .\packaging\AdsGamepadService.Service\AdsGamepadService.Service.nuspec -o .\packaging\bin\release
 ```
 
-Self contained, so the target needs no .NET runtime installed. A runtime PC is not a developer PC, and the package should not depend on what happens to be on it. The package gets bigger; nobody has minded.
+The output folder is created first, because `tcpkg pack` does not create it. Self contained, so the target needs no .NET runtime installed. A runtime PC is not a developer PC, and the package should not depend on what happens to be on it. The package gets bigger; nobody has minded.
 
 ## The nuspec
 
@@ -32,6 +33,9 @@ Self contained, so the target needs no .NET runtime installed. A runtime PC is n
   <id>Beckhoff-USA-Community.XAR.Service.AdsGamepad</id>
   <version>2.12.1</version>
   <title>ADS Gamepad Service</title>
+  <authors>Beckhoff Automation LLC</authors>
+  <requireLicenseAcceptance>true</requireLicenseAcceptance>
+  <license type="file">LICENSE.txt</license>
   <readme>docs/README.md</readme>
   <summary>Gamepad to PLC bridge service for TwinCAT runtime systems</summary>
   <tags>Beckhoff Setup SystemServiceRestart</tags>
@@ -129,6 +133,8 @@ if ($existing -and $existing.Status -ne 'Stopped') {
 
 ```powershell
 # chocolateyuninstall.ps1
+$ErrorActionPreference = 'Continue'
+
 $installDir  = 'C:\Program Files\Beckhoff USA Community\ADS Gamepad\Service'
 $serviceName = 'AdsGamepadService'
 
@@ -136,6 +142,7 @@ $existing = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 if ($existing) {
     if ($existing.Status -ne 'Stopped') { Stop-Service -Name $serviceName -Force }
     & sc.exe delete $serviceName | Out-Null
+    if ($LASTEXITCODE -ne 0) { Write-Warning "Removing the service registration failed, sc.exe code $LASTEXITCODE. Run 'sc.exe delete $serviceName' by hand." }
 }
 
 # Program files are removed but an edited appsettings.json is kept so a
@@ -146,6 +153,8 @@ if (Test-Path $installDir) {
 ```
 
 `sc.exe delete` marks the service for deletion; it is gone once the last handle closes, which is why a reinstall right after an uninstall sometimes needs a second of patience, and the real install script sleeps two seconds after a delete for that reason.
+
+The uninstall script in the repository runs with `$ErrorActionPreference = 'Stop'` and throws when `sc.exe delete` fails. The version here reports and goes on, which is the rule from [step 5](../packages/scripts.md#step-5-chocolateyuninstallps1): a thrown error would leave the package half removed and still listed as installed.
 
 ## When it is an ASP.NET application
 

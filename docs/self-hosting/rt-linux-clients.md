@@ -36,7 +36,7 @@ If it fails with "Sub-process /usr/bin/sqv returned an error code" and "The repo
 sudo apt install baus-adsovermqtt-xar
 ```
 
-`apt` installs `tc31-xar-um` first if it is missing, and refuses while the engineering variant is installed. The package's script restarts `TcSystemServiceUm`, and the route comes up within a few seconds.
+`apt` installs `tc31-xar-um` first if it is missing. If the engineering variant is installed, `apt` offers to remove it, because the two packages conflict; it asks before it does, and `-y` answers yes for you. The package's script restarts `TcSystemServiceUm`, and the route comes up within a few seconds.
 
 ## Step 5: check it
 

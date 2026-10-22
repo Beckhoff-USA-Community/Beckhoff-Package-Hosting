@@ -26,6 +26,8 @@ The library file is whatever you save from XAE through *Save as library*. A `.li
   <version>2.3.0</version>
   <title>AdsGamepad PLC Library</title>
   <authors>Beckhoff Automation LLC</authors>
+  <requireLicenseAcceptance>true</requireLicenseAcceptance>
+  <license type="file">LICENSE.txt</license>
   <readme>docs/README.md</readme>
   <summary>TwinCAT PLC library for the ADS Gamepad Service</summary>
   <tags>Beckhoff TwinCAT XAE PLC Library AllowMultipleVersions</tags>
@@ -42,7 +44,7 @@ The library file is whatever you save from XAE through *Save as library*. A `.li
 </files>
 ```
 
-Two things to notice. The tag `AllowMultipleVersions` tells the Package Manager that two versions of this package may be installed at the same time, which is how PLC libraries work: a project pinned to 2.2.1 keeps compiling after 2.3.0 arrives. Beckhoff's own library packages carry the tag. And the package version is the library version. Keeping them equal is not required, but the uninstall script has to name the exact library version to remove, so it is one less thing to get wrong.
+Three things to notice. The tag `AllowMultipleVersions` tells the Package Manager that two versions of this package may be installed at the same time, which is how PLC libraries work: a project pinned to 2.2.1 keeps compiling after 2.3.0 arrives. Beckhoff's own library packages carry the tag. And the package version is the library version. Keeping them equal is not required, but the uninstall script has to name the exact library version to remove, so it is one less thing to get wrong. And `requireLicenseAcceptance` is `true` with `<license>` naming `LICENSE.txt`, so the GUI shows the license and asks the user to accept it before the install; the file is listed under `<files>` like any other.
 
 The dependency is `TwinCAT.Standard.XAE` at any version, because the install needs an engineering installation with the PLC component and nothing more specific.
 
@@ -56,8 +58,9 @@ $ErrorActionPreference = 'Stop'
 $toolsDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $libraryFile = Join-Path $toolsDir 'AdsGamepad.library'
 
-# RepTool ships with every 4026 engineering installation.
-$repTools = @(Join-Path 'C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Components\Plc\Build_4026.*\' 'Common\RepTool.exe' -Resolve)
+# RepTool ships with every 4026 engineering installation. Without one, the list
+# is empty and the throw below says so.
+$repTools = @(Get-Item 'C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Components\Plc\Build_4026.*\Common\RepTool.exe' -ErrorAction SilentlyContinue | ForEach-Object FullName)
 if ($repTools.Length -eq 0) {
     throw 'No TwinCAT XAE 4026 installation with RepTool.exe was found. This package needs an engineering system.'
 }
@@ -83,6 +86,7 @@ Write-Host 'The AdsGamepad library is installed in the XAE library repository.'
 
 The pieces worth keeping when you copy this:
 
+* The lookup itself must not fail. `Get-Item` with `-ErrorAction SilentlyContinue` returns an empty list when there is no 4026 folder, so the script reaches its own error message. `Join-Path -Resolve`, which the script in the repository uses, throws a bare "Cannot find path" under `$ErrorActionPreference = 'Stop'` before that check.
 * A PC can have more than one 4026 PLC build installed, and the folder names sort as text. The script picks the highest build by number, not by name.
 * RepTool wants a profile name, `TwinCAT PLC Control_Build_4026.14` for example, and the build folder name is exactly the suffix it wants.
 * RepTool's exit code is not documented and not trusted. The library repository is a folder tree under `C:\ProgramData\Beckhoff\TwinCAT\PlcEngineering\Managed Libraries\<Company>\<Name>\<Version>`, so the script checks that the folder exists afterwards. Company, name and version come from the library's project information in XAE; look them up there and put them in the script.
@@ -93,10 +97,10 @@ The pieces worth keeping when you copy this:
 RepTool removes a library by its identity string, `Name, Version (Company)`:
 
 ```powershell
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Continue'
 $libraryIdentity = 'AdsGamepad, 2.3.0 (Beckhoff Community)'
 
-$repTools = @(Join-Path 'C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Components\Plc\Build_4026.*\' 'Common\RepTool.exe' -Resolve)
+$repTools = @(Get-Item 'C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Components\Plc\Build_4026.*\Common\RepTool.exe' -ErrorAction SilentlyContinue | ForEach-Object FullName)
 if ($repTools.Length -gt 0) {
     $repTool = $repTools | Sort-Object { [version]((Split-Path (Split-Path (Split-Path $_ -Parent) -Parent) -Leaf) -replace '^Build_', '') } | Select-Object -Last 1
     $buildName = Split-Path (Split-Path (Split-Path $repTool -Parent) -Parent) -Leaf
@@ -105,6 +109,8 @@ if ($repTools.Length -gt 0) {
 }
 Write-Host 'The AdsGamepad library was removed.'
 ```
+
+The uninstall never throws: `$ErrorActionPreference` is `Continue`, and when no 4026 installation is left, there is nothing to uninstall from. That is the rule from [step 5](../packages/scripts.md#step-5-chocolateyuninstallps1). The script in the repository runs with `Stop` and resolves the path with `Join-Path -Resolve`, so on a PC without XAE it fails and leaves the package half removed; the version here differs for that reason.
 
 The identity line is the one thing that has to move in step with the package version. When you bump the library, bump this line, the repository check in the install script, and the nuspec version together.
 

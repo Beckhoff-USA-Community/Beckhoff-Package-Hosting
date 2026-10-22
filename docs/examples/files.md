@@ -42,7 +42,11 @@ Copy-Item -Path $certSource.FullName -Destination $certTarget -Force
 # ---- 2. grant ----
 # TcSignTool (4026.14) returns exit code 1 on success AND on failure, and it does not validate the
 # password (a wrong one shows up at the first signed build). The output text is the only signal.
+# Merging stderr with 2>&1 under 'Stop' is a terminating error in Windows PowerShell 5.1, so the
+# preference drops to 'Continue' around the call.
+$prev = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
 $grantOutput = (& $tcSignTool grant /f "$certTarget" /p "$certPassword" 2>&1 | ForEach-Object { "$_" }) -join "`n"
+$ErrorActionPreference = $prev
 Write-Host $grantOutput
 if ($grantOutput -notmatch '(?m)^granted password for ') { throw "TcSignTool grant did not succeed: $grantOutput" }
 
@@ -64,6 +68,7 @@ Write-Host 'Reboot or sign out and back in so Visual Studio and MATLAB see the n
 The catches:
 
 * **The exit code lies.** `TcSignTool grant` returns 1 whether it worked or not. The script reads the output and looks for the success line. Whenever you call a tool from a script, find out what its exit code means before you trust it.
+* **`2>&1` and `Stop` do not mix in Windows PowerShell 5.1.** There, the first line a tool writes to stderr becomes a terminating error, and the script would stop at the grant before it reads the output. PowerShell 7.2 and later leave stderr alone. The script lowers the preference to `Continue` for that one call, so it runs under either shell.
 * **The grant does not check the password.** It stores whatever you give it; a wrong password fails the first signed build, not the install. There is nothing a script can do about that except say so.
 * **The grant is per Windows user.** TcSignTool stores it under `HKCU`, so install the package as the user who will build the projects.
 * **Environment variables need a new sign in.** Visual Studio and MATLAB read them at start. The script sets them in all three scopes and then tells the user to sign out, because that is the one part it cannot do.

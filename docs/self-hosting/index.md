@@ -25,7 +25,7 @@ The package has the same jobs on every platform. Who does which part differs:
 | Put the route file in place | the install script copies it | dpkg unpacks it to `/etc/TwinCAT/3.1/Target/Routes/` | pkg unpacks it to `/usr/local/etc/TwinCAT/3.1/Target/Routes/` |
 | Make the router read it | the script restarts `TcSysSrv` | `postinst` restarts `TcSystemServiceUm` | `post-install` asks TwinCAT to restart over ADS |
 | Take it out again | the uninstall script deletes it | dpkg deletes it | pkg deletes it |
-| Keep the engineering variant out | the install script checks | `Conflicts:` in `control` | `pre-install` checks the route folder |
+| Keep the engineering variant out | the install script checks | `Conflicts:` in `control` (apt offers to remove it) | `pre-install` checks the route folder |
 | Require the TwinCAT runtime | `TwinCAT.XAR.Base` | `tc31-xar-um` | `TC31-XAR` and `TcAdsTool` |
 
 ## The repositories on Nexus
