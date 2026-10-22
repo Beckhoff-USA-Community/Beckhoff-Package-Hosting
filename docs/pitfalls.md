@@ -63,3 +63,13 @@ Everything on this page happened. Most entries are one line; the page they belon
 * **The NuGet API-Key realm has to be active** in Nexus (*Security*, *Realms*), or the API key from the user menu does nothing.
 * **The raw repository needs *Allow redeploy* and strict content type validation off,** or uploading `index.json` a second time fails and `.md` files are refused.
 * **Anonymous read is what the GUI uses.** When an icon or release note shows up for you and not for a colleague, open the address without a login.
+
+## Beckhoff RT Linux and TwinCAT/BSD
+
+From the [Not the primary focus](other/index.md) section.
+
+* **Nexus signs an apt repository but does not serve its public key.** `repository-key.gpg` returns 404 on 3.97. Put the key on the raw repository. See [the public key](other/debian.md#the-public-key-on-the-raw-repository).
+* **On TwinCAT/BSD, never restart `TcSystemService` from a package script.** `pkg` kills every process the script started, the new service included. Ask TwinCAT for a restart over ADS instead: `ads 127.0.0.1.1.1 state 16`, or `2` in RUN. See [the restart](other/freebsd.md#do-not-restart-the-service-from-a-script).
+* **`pkg repo <folder> rsa:<key>` leaves fingerprint clients with "No signature found".** That form does not embed the public key. Sign with `signing_command:` and the handbook script. See [signing the repository](other/freebsd.md#signing-the-repository).
+* **A `conflicts` entry in a `pkg` manifest breaks `pkg add`** with a sqlite NOT NULL error when the named package is absent. Check for the other variant in `pre-install`. See [no conflicts](other/freebsd.md#no-conflicts-in-the-manifest).
+* **A `pkg` package is invisible to another FreeBSD major version.** Build once per TwinCAT/BSD release, into a repository folder per release. See [one build per release](other/freebsd.md#one-build-per-twincatbsd-release).

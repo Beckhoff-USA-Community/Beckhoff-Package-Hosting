@@ -27,6 +27,12 @@ nav = [
     { "Nexus" = "hosting/nexus.md" },
   ] },
   { "Pitfalls" = "pitfalls.md" },
+  { "Not the primary focus" = [
+    { "Other platforms on Nexus" = "other/index.md" },
+    { "Debian packages for RT Linux" = "other/debian.md" },
+    { "FreeBSD packages for TwinCAT/BSD" = "other/freebsd.md" },
+    { "Docker images" = "other/docker.md" },
+  ] },
 ]
 
 [project.theme]
