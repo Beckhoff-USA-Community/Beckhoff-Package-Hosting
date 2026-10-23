@@ -19,6 +19,7 @@ docs\
     versioning.md      version numbers, dependency versions, prereleases, upgrades
     packing.md         steps 7-10: tcpkg pack, looking inside, a local folder feed, a test install
     workloads.md       turning packages into a card in the GUI
+    disclaimer.md      the disclaimer package: the text a feed shows before a PC adds it
   examples\          PLC library, .NET service, plain files (certificate, route file)
   hosting\           feeds for other PCs:
     index.md           the three kinds of feed; icons and release notes inside the package or hosted
@@ -36,6 +37,7 @@ docs\
     tcbsd-clients.md       TwinCAT/BSD: fingerprint, repository file, install, upgrade, firewall
     docker.md          Docker images: pull, change, push to Nexus, pull on a controller
   stylesheets\       extra.css
+.github\workflows\  docs.yml: builds the site and publishes it to GitHub Pages on every push to main
 site\                build output (git-ignored)
 ```
 
@@ -53,6 +55,10 @@ are in commit `50cf836` (`docs\linux\`). In the Nexus screenshot, `docs\images\f
 is blanked out.
 
 ## Reading it
+
+The published site is at https://beckhoff-usa-community.github.io/Beckhoff-Package-Hosting/. The workflow in
+`.github\workflows\docs.yml` builds it with `--strict` and deploys the `site\` folder to GitHub Pages on every push
+to `main`; the repository's Pages setting has to be *Source: GitHub Actions*. To read it locally:
 
 Zensical is a Python package (`python -m pip install zensical`). From this folder:
 

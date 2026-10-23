@@ -1,5 +1,8 @@
 # TwinCAT Packaging Guide
 
+!!! warning "Unofficial documentation, provided as is"
+    This guide is not provided by Beckhoff Automation GmbH and is not part of the official TwinCAT documentation. It is a community document, maintained by the Beckhoff USA Community, and it is offered as is, without warranty or support. It records what worked for its authors with the TwinCAT and Package Manager versions it names. Check anything you rely on against the [TwinCAT Package Manager documentation on Infosys](https://infosys.beckhoff.com/content/1033/tc3_installation/15698617995.html) and on a test PC of your own.
+
 This guide is for the engineer who has something to hand out, such as a PLC library, a Windows service, a certificate, a route file or a folder of documents, and wants it to install with one click in the TwinCAT Package Manager instead of a zip file and a page of instructions.
 
 It shows how to build such a package by hand: the folder, the nuspec, the install scripts, the version number, the pack command, and a test install on your own PC. Then how several packages become one card in the Package Manager, and how to host them so that other PCs can install them: from a folder, from GitHub Packages, or from a Nexus server. Everything is done with the tools the Package Manager brings and a text editor. Once you have built a package by hand, automating the steps is up to you.
@@ -25,7 +28,7 @@ TwinCAT 3.1 Build 4026 installs through the **TwinCAT Package Manager**. It has 
 
 ## The way through
 
-1. **Building a package.** Read these in order. They build one small package from an empty folder to a test install, in numbered steps: [the folder and the nuspec](packages/nuspec.md), [install, upgrade and uninstall](packages/scripts.md), [versioning](packages/versioning.md), [packing and testing](packages/packing.md). Then [workloads](packages/workloads.md) put packages on a card.
+1. **Building a package.** Read these in order. They build one small package from an empty folder to a test install, in numbered steps: [the folder and the nuspec](packages/nuspec.md), [install, upgrade and uninstall](packages/scripts.md), [versioning](packages/versioning.md), [packing and testing](packages/packing.md). Then [workloads](packages/workloads.md) put packages on a card, and a [feed disclaimer](packages/disclaimer.md) shows your terms before anyone adds the feed.
 2. **Examples.** The same steps on the packages people most often build: a [PLC library](examples/plc-library.md), a [.NET service](examples/dotnet-service.md), and [plain files](examples/files.md) such as a certificate or a route file.
 3. **[Hosting](hosting/index.md).** Put the packages on a feed other PCs can reach: [a folder on disk](hosting/folder.md), [GitHub Packages](hosting/github.md) or [Nexus](hosting/nexus.md). Read the first page of the section whichever you pick; it explains why icons and release notes need extra care on a server.
 4. **[Pitfalls](pitfalls.md).** Read it before you share anything. Most of it is one line each, and every line cost somebody an afternoon.

@@ -133,4 +133,4 @@ On top of the [package checklist](packing.md#before-you-share-a-package):
 * Every component is on the feed at the version the workload names, before the workload is.
 * An Engineering and a Runtime workload of the same product share one `<title>`.
 
-Next: the examples, starting with a [PLC library](../examples/plc-library.md).
+Next: [a disclaimer for your feed](disclaimer.md), the one package that is never installed.

@@ -1,5 +1,8 @@
 [project]
 site_name = "TwinCAT Packaging Guide"
+# The address the site is published at, GitHub Pages of the Beckhoff-USA-Community organization.
+# It only sets the canonical URL in the HTML header; the pages still read from disk.
+site_url = "https://beckhoff-usa-community.github.io/Beckhoff-Package-Hosting/"
 site_description = "How to build TwinCAT Package Manager packages and workloads by hand, and host them on a folder feed, GitHub Packages or Nexus"
 extra_css = ["stylesheets/extra.css"]
 # The site is read from disk or from "zensical serve", not from a web server,
@@ -13,6 +16,7 @@ nav = [
     { "Versioning" = "packages/versioning.md" },
     { "Packing and testing" = "packages/packing.md" },
     { "Workloads" = "packages/workloads.md" },
+    { "Feed disclaimer" = "packages/disclaimer.md" },
   ] },
   { "Examples" = [
     { "PLC library" = "examples/plc-library.md" },

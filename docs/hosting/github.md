@@ -26,7 +26,7 @@ tcpkg config unset -n VerifySignatures
 tcpkg source add -n MyCompany -s https://nuget.pkg.github.com/MyCompany/index.json -u <your GitHub user name> --take 100
 ```
 
-`tcpkg` asks for a password; paste the token. Both settings are required:
+`tcpkg` asks for a password; paste the token. If the feed carries a [disclaimer](../packages/disclaimer.md), `tcpkg` shows it next and asks you to accept it; the Beckhoff USA Community feed has one. Both settings are required:
 
 * **[Signature verification off](signatures.md)**, before the feed is added.
 * **`--take 100`.** The Package Manager asks a feed for 500 results per page by default, and GitHub refuses pages larger than 100. Without the option, adding the feed fails with "Failed to retrieve metadata from source". For a feed that was added without it, `tcpkg source edit --help` offers the same option: `tcpkg source edit MyCompany --take 100`.

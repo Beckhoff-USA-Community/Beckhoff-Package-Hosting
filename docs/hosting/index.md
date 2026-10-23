@@ -17,6 +17,8 @@ Whichever you pick, two things come first:
 1. **[Turn off signature verification](signatures.md)** on every PC that uses the feed. Your packages carry no Beckhoff signature.
 2. **Decide where the icon and the release notes live.** That depends on the kind of feed, and it is the next section.
 
+A feed can also show its terms before a PC registers it: a short text the user has to accept, the way Beckhoff's own testing feed and the Beckhoff USA Community feed do. That is a package of its own kind, the [feed disclaimer](../packages/disclaimer.md).
+
 ## Inside the package, or hosted next to the feed
 
 A workload's icon and every package's release notes are files. Where the GUI looks for them depends on the feed:
