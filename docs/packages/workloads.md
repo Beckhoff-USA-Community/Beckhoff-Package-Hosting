@@ -6,26 +6,18 @@ Beckhoff's own feed shows the pattern. TwinCAT Standard is two workloads, `TwinC
 
 ## The folder
 
-Same as a package, plus an icon:
+A nuspec, the release notes and an icon, and nothing else:
 
 ```
 BAUS.AdsOverMqtt.Engineering.XAE\
   BAUS.AdsOverMqtt.Engineering.XAE.nuspec
   BAUS.AdsOverMqtt.Engineering.XAE.ReleaseNote.md
   icon.png                                           64 by 64 pixels
-  tools\
-    chocolateyinstall.ps1                            one Write-Host line
-    chocolateyuninstall.ps1                          one Write-Host line
-    chocolateybeforemodify.ps1                       a comment
 ```
 
-The scripts exist because the Package Manager expects them. The install script of a workload is a single line:
+A workload needs no `tools` folder and no scripts. Most of Beckhoff's workloads have none, and a test workload with only the three files above installed and uninstalled on `tcpkg` 2.6.24 without a word. The community workloads quoted here were built with a one-line install script that prints a message, which does no harm; it is not needed.
 
-```powershell
-# The workload itself installs nothing. The packages listed as dependencies in the nuspec
-# carry the content; the package manager installs them together with this workload.
-Write-Host 'Advanced Applications | Developer workload installed.'
-```
+Two other things a workload does not do: it is never checked for a running Visual Studio or TwinCAT XAE Shell, where a component package without the `NoVisualStudioRestart` tag is refused with exit code 1051 (the test workload installed with the Shell open), and it does not show a license, although every Beckhoff workload carries `requireLicenseAcceptance` with a `licenseUrl`; see [the nuspec page](nuspec.md#step-2-the-nuspec). Whether a workload gets a license step where a package does not was not tried.
 
 ## The nuspec
 
@@ -56,7 +48,6 @@ This is the Engineering workload of the ADS-over-MQTT card:
     </dependencies>
   </metadata>
   <files>
-    <file src="tools\**" target="tools" />
     <file src="BAUS.AdsOverMqtt.Engineering.XAE.ReleaseNote.md" target="BAUS.AdsOverMqtt.Engineering.XAE.ReleaseNote.md" />
     <file src="icon.png" target="icon.png" />
   </files>

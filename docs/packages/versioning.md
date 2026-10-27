@@ -79,7 +79,11 @@ So when a component changes, the workload changes too. The component gets a new 
 
 ## More than one version at once
 
-Normally one version of a package is installed, and an upgrade replaces it. PLC libraries are the exception. A project that references library 2.2.1 has to keep compiling after 2.3.0 arrives, so both have to be there. The tag `AllowMultipleVersions` in the nuspec tells the Package Manager that versions of this package may be installed side by side. Beckhoff's own library packages carry it; see the [PLC library example](../examples/plc-library.md#the-nuspec).
+Normally one version of a package is installed, and an upgrade replaces it. PLC libraries are the exception. A project that references library 2.2.1 has to keep compiling after 2.3.0 arrives, so both have to be there. The tag `AllowMultipleVersions` in the nuspec tells the Package Manager that versions of this package may be installed side by side. Beckhoff's own library packages carry it; see the [PLC library example](../examples/plc-library.md#the-nuspec). Two narrower forms exist on Beckhoff's feed, `AllowMultipleMajorVersions` (one installed version per major version, on the HMI Server API packages) and `AllowMultipleMajorMinorVersions` (one per major.minor, on `Beckhoff.Python`); neither was tried for this guide.
+
+## A major version, and a new id
+
+A new major version can warn the user before the upgrade runs, with a text the user has to accept, and a package id that must change can hand its users over to the new id. Both are tags, both were measured, and both are on [upgrades and retiring an id](lifecycle.md).
 
 ## Upgrades on the user's PC
 

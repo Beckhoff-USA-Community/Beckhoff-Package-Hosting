@@ -6,7 +6,7 @@ The folder is ready: a nuspec, the payload, three scripts. Packing turns it into
 
 * **The TwinCAT Package Manager** on the PC you pack on. It puts `tcpkg` on the PATH, and `tcpkg pack` is the packer. On a PC without it, the `nuget` command line tool packs the same nuspec: `nuget pack <nuspec> -OutputDirectory <folder> -NoPackageAnalysis`.
 * **The Package Manager GUI closed.** `tcpkg` is single instance, and the GUI runs `tcpkg` for every click. A pack or install that fails with "TcPkg is already running" usually means the GUI, or a `TcPkg.exe` it left behind; see [when something goes wrong](scripts.md#when-something-goes-wrong).
-* **TwinCAT XAE Shell and Visual Studio closed** for the test install. `tcpkg` 2.6.24 refused to install even this guide's test packages, which have nothing to do with the engineering, while TwinCAT XAE Shell was open: "Error: Running Microsoft Visual Studio or Beckhoff TwinCAT XAE Shell (64) process found.", exit code 1051. The dry run prints its plan and then the same error.
+* **TwinCAT XAE Shell and Visual Studio closed** for the test install. `tcpkg` 2.6.24 refused to install even this guide's test packages, which have nothing to do with the engineering, while TwinCAT XAE Shell was open: "Error: Running Microsoft Visual Studio or Beckhoff TwinCAT XAE Shell (64) process found.", exit code 1051. The dry run prints its plan and then the same error. A package whose files the engineering never has open can carry the tag `NoVisualStudioRestart` and install with the Shell open; see [the tags](nuspec.md#step-2-the-nuspec).
 * **An administrator PowerShell** for the test install. Packing does not need one.
 
 ## Step 7: pack
@@ -67,7 +67,7 @@ tcpkg source add -n Local -s C:\feed --priority 2
 tcpkg source list
 ```
 
-The first line turns signature checking off. Beckhoff signs its own packages, so that their integrity can be checked wherever a copy is kept ([TwinCAT Package Manager on Infosys](https://infosys.beckhoff.com/content/1033/tc3_installation/15698617995.html)). A package you pack yourself carries no such signature, and with checking on, adding the feed fails, and so does every install from it. It has to come before the feed is added, and it stays off on that PC. Beckhoff's own feed is priority 1; the number only orders the list.
+The first line turns signature checking off. Beckhoff signs its own packages, so that their integrity can be checked wherever a copy is kept ([TwinCAT Package Manager on Infosys](https://infosys.beckhoff.com/content/1033/tc3_installation/15698617995.html)). A package you pack yourself carries no such signature, and with checking on, the install of an unsigned package fails at the download. The feed can be added either way. The setting stays off on that PC until someone turns it on again; for the feed you hand to others, [signing your packages](../hosting/signing.md) is the way to leave it on. Beckhoff's own feed is priority 1; the number only orders the list.
 
 Keep the folder on a local drive. An elevated `tcpkg` does not always see a mapped network drive, and on one PC, starting an elevated shell with a network drive as its working directory made the elevation itself fail. If your packages are built on a share, copy them to `C:\feed` first, and start elevated shells with `-WorkingDirectory C:\`.
 
@@ -122,6 +122,7 @@ A checklist of the mistakes that have already happened once:
 * Every `<file src>` matched something: step 8 shows the file in the package.
 * The install script ran, the upgrade from the previous version ran, and the uninstall left nothing behind.
 * The scripts use nothing that needs PowerShell 7, if the package may meet an older Package Manager.
+* The package is [signed](../hosting/signing.md), if your feed is used with signature verification on.
 * For a workload: see the [workload page](workloads.md).
 
 ## Secrets in a package
@@ -134,4 +135,4 @@ Some packages exist to install something secret: a certificate with its password
 
 The packed package contains the secret in plain text, and so does every feed it is on. That is acceptable on a feed only people who may have the secret can read, such as one on a closed network, and not anywhere else.
 
-Next: [workloads](workloads.md), which turn several packages into one card in the GUI.
+Next: [upgrades and retiring an id](lifecycle.md), what the Package Manager offers once 1.0.0 is out, and then [workloads](workloads.md), which turn several packages into one card in the GUI.

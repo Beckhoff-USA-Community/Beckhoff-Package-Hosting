@@ -14,7 +14,7 @@ Nexus can also host packages for Beckhoff RT Linux and TwinCAT/BSD, and containe
 
 Whichever you pick, two things come first:
 
-1. **[Turn off signature verification](signatures.md)** on every PC that uses the feed. Your packages carry no Beckhoff signature.
+1. **Decide about [signature verification](signatures.md).** Your packages carry no Beckhoff signature, and the Package Manager refuses to install an unsigned package while verification is on. Either [sign your packages](signing.md) with a certificate of your own that every PC trusts once, or turn verification off on every PC that uses the feed.
 2. **Decide where the icon and the release notes live.** That depends on the kind of feed, and it is the next section.
 
 A feed can also show its terms before a PC registers it: a short text the user has to accept, the way Beckhoff's own testing feed and the Beckhoff USA Community feed do. That is a package of its own kind, the [feed disclaimer](../packages/disclaimer.md).

@@ -9,9 +9,11 @@ Everything on this page happened. Most entries are one line; the page they belon
 * **Scripts run under the Package Manager's own PowerShell,** not the shell you start `tcpkg` from. In `tcpkg` 2.6.24 that is PowerShell 7.4, even when `tcpkg` is called from Windows PowerShell 5.1. Older Package Manager versions were not checked; to be safe with them, keep to what 5.1 also understands.
 * **The install script runs from a temporary folder.** `%TEMP%\TcPkg\cache\...` is cleaned up afterwards. Copy the payload to where it belongs; never point a service or a shortcut at the script's folder.
 * **`tcpkg install --dry-run` needs an elevated shell** although it changes nothing.
-* **Close TwinCAT XAE Shell and Visual Studio before installing.** `tcpkg` refuses with exit code 1051 while one of them runs, even for a package that has nothing to do with the engineering.
+* **Close TwinCAT XAE Shell and Visual Studio before installing.** `tcpkg` refuses with exit code 1051 while one of them runs, even for a package that has nothing to do with the engineering. The tag `NoVisualStudioRestart` exempts a package; workloads are never checked.
+* **`tcpkg` does not read answers from a pipe.** Without `-y` in a script it stops with "Input is not possible from a non-interactive shell", exit code 1223. A package with an [upgrade disclaimer](packages/lifecycle.md) needs `--accept-string` on top; `-y` does not accept a disclaimer.
 * **`tcpkg` installs the lowest version a dependency allows.** `version="1.0.0"` installs 1.0.0 even when 1.1.0 is on the feed. That is what makes the plain form work as a pin.
-* **Turn signature verification off before adding an unsigned feed**, with `tcpkg config unset -n VerifySignatures`. The order matters: with verification on, adding the feed fails, and so does every install from it.
+* **An unsigned package does not install while signature verification is on.** The download stops with "Package integrity verification failed", exit code 574. Adding and listing the feed still work. Either [sign your packages](hosting/signing.md) and trust the certificate on each PC, or turn verification off with `tcpkg config unset -n VerifySignatures`.
+* **Switching verification back on refuses every unsigned package on every feed of that PC**, including versions you published before you started signing. Sign them all first.
 * **Feed metadata is cached for about 30 minutes.** A package you just published is not there yet. `--no-cache` on the command, *Reload Information* in the GUI, or delete the feed's folder under `%LOCALAPPDATA%\NuGet\v3-cache`.
 * **Uninstalling a workload with `--include-dependencies` takes `TwinCAT.XAE.Base` with it.** Name the component packages instead.
 * **Elevated tests and network drives do not mix.** Copy packages to a local folder before `tcpkg source add`, and start an elevated shell with `-WorkingDirectory C:\`.
@@ -25,6 +27,8 @@ Everything on this page happened. Most entries are one line; the page they belon
 * **The release notes parser knows headings and sentences.** Bullet lists render as `[object Object]`. Bold, backticks and links print their markers.
 * **A `<file src>` that matches nothing is skipped without a word.** The package builds, ships, and fails on the target. List what is in the package before you ship it.
 * **Icons are for workloads only.** A package with `<iconUrl>` still gets the stock icon.
+* **`requireLicenseAcceptance` shows nothing for a plain package.** Not in the terminal, not in the GUI, not from a folder feed or Nexus, with a license file or a URL. Put the license in the package anyway; the text a user accepts is the [feed disclaimer](packages/disclaimer.md).
+* **Changing an id needs two packages.** The new id with `DP:<old id>:DP` in its tags, and a last version of the old id that depends on the new one. Without the second, `tcpkg upgrade` never finds the new id. See [retiring an id](packages/lifecycle.md#retiring-an-id).
 * **A NuGet server hands the GUI metadata only.** Icons and release notes inside the package are never read from a feed served by a NuGet server such as Nexus or GitHub; they need hosted copies next to the feed. A local folder feed has no such problem. See [hosting](hosting/index.md#inside-the-package-or-hosted-next-to-the-feed).
 * **Ids starting with `TcPkg` are hidden** by the GUI.
 * **A nuspec cannot say "not together with".** When two packages exclude each other, the install script is the only guard.
@@ -44,7 +48,10 @@ Everything on this page happened. Most entries are one line; the page they belon
 * **A tool can accept a wrong input and say nothing.** `TcSignTool grant` stores a wrong password without complaint. Tell the user where the failure will show up instead.
 * **Environment variables set by a script are seen by new processes only.** Tell the user to sign out or reboot.
 * **The router reads route files only when it starts.** Copying the file is not enough; restart `TcSysSrv`. It is enough in UM mode too, no reboot.
-* **Package parameters are best effort.** Beckhoff documents `--params` for the HMI Server only. Separate them with spaces, not semicolons, and always have a default.
+* **Package parameters start with a slash.** `Get-PackageParameters`, the helper every script gets, reads `/Color:Blue`, `/Size=2` and `/Quiet`; a `Color=Blue` without the slash is dropped. Separate them with spaces, and always have a default.
+* **Never print a sensitive parameter.** `tcpkg` masks `--params-sensitive` in its own log line, but every line a script prints lands in `TcPkg.log` as it is.
+* **No uninstall script means your files stay.** The Package Manager removes its record of the package and nothing else. Beckhoff can skip the script because Windows Installer removes its MSIs; a package that copies files cannot.
+* **The install script knows what it replaces.** `previousInstalledPackageVersion` is set on an upgrade and on a downgrade, in the incoming install script only. Use it to remove what the old version shipped and the new one does not.
 
 ## Secrets
 
@@ -63,6 +70,8 @@ Everything on this page happened. Most entries are one line; the page they belon
 * **The NuGet API-Key realm has to be active** in Nexus (*Security*, *Realms*), or the API key from the user menu does nothing.
 * **The raw repository needs *Allow redeploy* and strict content type validation off,** or uploading `index.json` a second time fails and `.md` files are refused.
 * **Anonymous read is what the GUI uses.** When an icon or release note shows up for you and not for a colleague, open the address without a login.
+* **`tcpkg download -o` needs a folder that exists**, like `pack`. The bundle it writes with `--zip` installs with `tcpkg import` on a PC that has no feed at all; see [the offline bundle](hosting/folder.md#a-pc-without-a-feed-the-offline-bundle).
+* **Push to the hosted NuGet repository, not to the raw copy of the index.** A feed registered on `tcpkg-raw/feeds/myfeed/index.json` is still published to `nuget-hosted`; a push to the raw address answers 400.
 
 ## Beckhoff RT Linux and TwinCAT/BSD
 

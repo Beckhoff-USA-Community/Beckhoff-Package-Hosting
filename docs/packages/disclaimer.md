@@ -14,7 +14,7 @@ A script can accept the disclaimer ahead of time with the accept string the pack
 tcpkg source add -n MyFeed -s https://nexus.example.com/repository/tcpkg-raw/feeds/myfeed/index.json --accept-string AcceptMyCompany1.0.0
 ```
 
-`tcpkg source add --help` does not list `--accept-string` in 2.6.24, but the command takes it, and it is what the GUI itself runs once the user has clicked accept. The next section shows where the string comes from.
+`tcpkg source add --help` does not list `--accept-string` in 2.6.24, but the command takes it, and it is what the GUI itself runs once the user has clicked accept. The next section shows where the string comes from. The same tag form and the same option serve a second kind of disclaimer, the text a package shows before a major upgrade; that one is on [upgrades and retiring an id](lifecycle.md#a-disclaimer-before-a-major-upgrade).
 
 ## The folder
 

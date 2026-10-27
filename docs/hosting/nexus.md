@@ -43,6 +43,7 @@ dotnet nuget push .\MyCompany.XAE.Docs.MyMachine.1.0.0.nupkg `
     --api-key <NuGet API key> --skip-duplicate
 ```
 
+* Sign the package first if your feed uses [signatures](signing.md). A push replaces nothing, so a version pushed unsigned stays unsigned.
 * Push the component packages before the workloads, so that a workload is never on the feed before its parts.
 * `--skip-duplicate` reports a version that is already there instead of failing. Nexus refuses to replace it anyway. You can delete a version in the Nexus web UI and push it again; do that only for a mistake nobody has installed yet.
 * Use `dotnet nuget push`, not `tcpkg push`: `tcpkg` writes every command line it runs, the API key included, into `C:\ProgramData\Beckhoff\TcPkg\logs\TcPkg.log`.
@@ -148,7 +149,7 @@ tcpkg source add -n MyFeed -s https://nexus.example.com/repository/tcpkg-raw/fee
 tcpkg list -n MyFeed --no-cache
 ```
 
-The first line is [signature verification](signatures.md). A feed registered on `nuget-hosted/index.json` directly works too, but shows no release notes. If `tcpkg source add` fails with "Failed to retrieve metadata from source", add `--take 100`; the Package Manager asks for 500 results per page by default, and some servers refuse that.
+The first line is [signature verification](signatures.md), for unsigned packages. For [signed packages](signing.md) it is `tcpkg certificate add` with the certificate file from the raw repository instead, and verification stays on: a signed package installed from a Nexus feed with verification on, and an unsigned package on the same feed was refused, with `tcpkg` 2.6.24. A feed registered on `nuget-hosted/index.json` directly works too, but shows no release notes. If `tcpkg source add` fails with "Failed to retrieve metadata from source", add `--take 100`; the Package Manager asks for 500 results per page by default, and some servers refuse that.
 
 Open the GUI, pick *MyFeed* in the feed selector, and the cards are there.
 

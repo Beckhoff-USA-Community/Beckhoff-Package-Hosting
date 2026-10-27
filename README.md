@@ -18,12 +18,14 @@ docs\
     scripts.md         steps 4-6: install, uninstall and before-modify scripts; the tcpkg commands
     versioning.md      version numbers, dependency versions, prereleases, upgrades
     packing.md         steps 7-10: tcpkg pack, looking inside, a local folder feed, a test install
+    lifecycle.md       the disclaimer before a major upgrade, and retiring an id (the DP tag and the shim)
     workloads.md       turning packages into a card in the GUI
     disclaimer.md      the disclaimer package: the text a feed shows before a PC adds it
   examples\          PLC library, .NET service, plain files (certificate, route file)
   hosting\           feeds for other PCs:
     index.md           the three kinds of feed; icons and release notes inside the package or hosted
-    signatures.md      turning off signature verification
+    signatures.md      signature verification: what it checks, turning it off and on
+    signing.md         signing your own packages: the certificate, tcpkg sign, trusting it on each PC
     folder.md          a folder on disk
     github.md          GitHub Packages: classic token, --take 100, what the GUI shows
     nexus.md           Nexus: repositories, push, hosted icons, hosted service index for release notes

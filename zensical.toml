@@ -15,6 +15,7 @@ nav = [
     { "Install, upgrade and uninstall" = "packages/scripts.md" },
     { "Versioning" = "packages/versioning.md" },
     { "Packing and testing" = "packages/packing.md" },
+    { "Upgrades and retiring an id" = "packages/lifecycle.md" },
     { "Workloads" = "packages/workloads.md" },
     { "Feed disclaimer" = "packages/disclaimer.md" },
   ] },
@@ -26,6 +27,7 @@ nav = [
   { "Hosting" = [
     { "Hosting packages" = "hosting/index.md" },
     { "Signature verification" = "hosting/signatures.md" },
+    { "Signing your packages" = "hosting/signing.md" },
     { "A folder on disk" = "hosting/folder.md" },
     { "GitHub Packages" = "hosting/github.md" },
     { "Nexus" = "hosting/nexus.md" },

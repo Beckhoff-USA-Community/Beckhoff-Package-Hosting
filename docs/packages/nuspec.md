@@ -85,25 +85,32 @@ Field by field:
 :   The file the GUI shows on the Feature Release Notes tab. Beckhoff names it `<Id>.ReleaseNote.md`. The file must also be listed under `<files>`; when it is not, `tcpkg pack` stops with "The readme file ... does not exist in the package". [Step 3](#step-3-the-release-notes-file) says what the file may contain.
 
 `tags`
-:   Space separated words. The Package Manager reads some of them:
+:   Space separated words. Most are for the reader; the Package Manager reads these, and it compares them without regard to case:
 
     | Tag | Meaning |
     |---|---|
     | `Beckhoff TwinCAT` | by convention every TwinCAT package starts with these two |
-    | `XAE` / `XAR` | which side the package is for: engineering or runtime |
+    | `XAE` / `XAR` | which side the package is for: engineering or runtime. A convention; the Package Manager does not act on them |
     | `Workload`, `Category<Name>`, `VariantXAE` / `VariantXAR` | make a package a workload card, see [workloads](workloads.md) |
     | `AllowMultipleVersions` | more than one version of this package may be installed side by side (PLC libraries use it) |
+    | `AllowMultipleMajorVersions`, `AllowMultipleMajorMinorVersions` | one version per major version, or per major.minor, side by side (Beckhoff's HMI Server API packages, `Beckhoff.Python`); not tried for this guide |
     | `SystemServiceRestart` | the install restarts the TwinCAT System Service, so the GUI can warn the user |
+    | `NoVisualStudioRestart` | the package may be installed while Visual Studio or TwinCAT XAE Shell is running. Without it, `tcpkg` refuses with exit code 1051 while one of them is open; with it, a test package installed with the Shell open. For a package whose files the engineering never holds open, such as a folder of documents |
     | `InstallationLevel1` | the package installs without administrator rights (Beckhoff uses it on PLC libraries and HMI packages) |
+    | `PackageDisclaimerMajorUpgrade`, `AS:<string>:AS` | a text the user has to accept before an upgrade across a major version; see [upgrades and retiring an id](lifecycle.md) |
+    | `DP:<old id>:DP` | this package replaces the package with the old id; see [upgrades and retiring an id](lifecycle.md) |
+    | `KM`, `UM`, `UMCompatible`, `VS2022`, `TcXaeShell64` and the like | Beckhoff's own machinery for runtime-mode and Visual Studio sub-packages. Leave them off your packages: a test package tagged `XAR` and nothing else installed in UM mode without a word |
+
+    Tags such as `Setup` or `AutoUninstall` that Beckhoff's packages carry are conventions of their build and mean nothing to the Package Manager.
 
 `dependencies`
-:   What has to be installed first. The Package Manager installs a missing dependency before your package. A dependency on a Beckhoff package takes version `0.0.0`, which means any version, so your package does not refuse a newer TwinCAT. `TwinCAT.XAE.Base` is the engineering base package and `TwinCAT.XAR.Base` the runtime one; depend on the one for the side your package is for. The [versioning page](versioning.md#dependency-versions) covers dependencies on your own packages.
+:   What has to be installed first. The Package Manager installs a missing dependency before your package. A dependency on a Beckhoff package takes version `0.0.0`, which means any version, so your package does not refuse a newer TwinCAT. `TwinCAT.XAE.Base` is the engineering base package and `TwinCAT.XAR.Base` the runtime one; depend on the one for the side your package is for. A dependency without a `version` attribute also means any version; Beckhoff's packages write `0.0.0`, and so does this guide. The [versioning page](versioning.md#dependency-versions) covers dependencies on your own packages.
 
-`requireLicenseAcceptance` and `license`
-:   When `requireLicenseAcceptance` is `true`, the GUI shows the license file named by `<license type="file">LICENSE.txt</license>` and asks the user to accept it. List the license file under `<files>` like any other file. Leave it `false` when there is no license to accept.
+`requireLicenseAcceptance`, `license` and `licenseUrl`
+:   Where the package's license is: `<license type="file">LICENSE.txt</license>` for a file inside the package, listed under `<files>` like any other, or `<licenseUrl>` for a web address. Beckhoff's component packages carry the file form, its workloads the URL form. Put the license in the package when you have one; it is the honest place for it. Do not expect the Package Manager to show it. With `requireLicenseAcceptance` set to `true` and either form, a test package installed from a folder feed and from Nexus, in the terminal and in the GUI, without a license text, a link or an accept step anywhere (`tcpkg` 2.6.24, GUI 2.7.6). Whether a workload gets a license step was not tried. The text a user has to accept before using your feed is the [feed disclaimer](disclaimer.md), and that one works.
 
-`projectUrl`, `copyright`
-:   Optional. The example has neither.
+`projectUrl`, `copyright`, `releaseNotes`
+:   Optional. The example has none of them. Beckhoff fills `<releaseNotes>` with build information; the GUI does not show it, and the Feature Release Notes tab comes from `<readme>`.
 
 `files`
 :   What goes into the package, and where. `src` is relative to the nuspec, `target` is the path inside the package, and `**` takes a whole folder tree. A `src` that matches nothing is skipped without a word, and the package fails on the target PC instead of on your desk. [Step 8](packing.md#step-8-look-inside) is how you catch that.
